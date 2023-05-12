@@ -1,0 +1,40 @@
+version: '3'
+services:
+  redis:
+   image: 'redis'
+   ports:
+     - "6379:6379"
+   container_name: redis
+   volumes:
+     - /home/mountdirectory:/usr/share/nginx/web
+   
+  web1:
+   build: ./web01/
+   ports:
+     - "81:5000"
+   depends_on:
+     - redis
+   container_name: web1
+   volumes:
+     - /home/mountdirectory:/usr/share/nginx/web
+    
+  web2:
+   build: ./web02/
+   ports:
+     - "82:5000"
+   depends_on:
+     - redis
+   container_name: web2
+   volumes:
+     - /home/mountdirectory:/usr/share/nginx/web
+   
+
+  nginx:
+   image: nginx
+   ports:
+     - "80:80"
+   depends_on:
+     - web1
+     - web2
+   container_name: nginx
+ 
