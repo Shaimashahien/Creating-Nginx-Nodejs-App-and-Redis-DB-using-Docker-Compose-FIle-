@@ -1,0 +1,45 @@
+version: '3'
+services:
+  redis:
+    image: 'redis:alpine'
+    container_name: 'redis'
+    restart: always
+    volumes:
+      - /home/data:/data
+    ports:
+     - '6379:6379'
+  web1:
+    build: ./web1/
+    # rename image using image: image_name
+    image: 'web1'
+    # rename container using container_name: container_name
+    container_name: 'web1'
+    restart: always
+    volumes:
+      - /home/web:/home/web
+    depends_on:
+      - 'redis'
+    ports:
+      - '81:5000'
+  web2:
+    build: ./web2/
+    image: 'web2'
+    container_name: 'web2'
+    restart: always
+    volumes:
+      - /home/web:/home/web
+    depends_on:
+      - 'redis'
+    ports:
+      - '82:5000'
+  nginx:
+    build: ./nginx/
+    image: 'nginx'
+    container_name: 'nginx'
+    restart: always
+    depends_on:
+      - 'web1'
+      - 'web2'
+    ports:
+      - '80:80'
+
